@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<body>
+
+<svg id="plot" height="210" width="400">
+</svg>
+<script>
+// Get the SVG element
+var svg = document.getElementById("plot");
+
+// Define the equation
+var equation = function(x) {
+    // Define your equation here, for example: y = x^2
+    return Math.pow(x, 2);
+};
+
+// Define the scale for x and y coordinates
+var xScale = 20; // Scale for x-axis
+var yScale = 20; // Scale for y-axis
+
+// Define the path element
+var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+path.setAttribute("fill", "none");
+path.setAttribute("stroke", "blue");
+
+// Build the path data
+var pathData = "";
+var startX = -10;
+var endX = 10;
+var step = 0.1;
+var controlPointOffset = 0.4; // Adjust this value to control the curvature of the curve
+
+var x = startX;
+var y = equation(x);
+var xPos = x * xScale + svg.width.baseVal.value / 2;
+var yPos = -y * yScale + svg.height.baseVal.value / 2;
+pathData += "M " + xPos + " " + yPos;
+
+for (x = startX + step; x <= endX; x += step) {
+    var prevXPos = xPos;
+    var prevYPos = yPos;
+    xPos = x * xScale + svg.width.baseVal.value / 2;
+    y = equation(x);
+    yPos = -y * yScale + svg.height.baseVal.value / 2;
+
+    var xc1 = prevXPos + controlPointOffset * (xPos - prevXPos);
+    var yc1 = prevYPos;
+    var xc2 = xPos - controlPointOffset * (xPos - prevXPos);
+    var yc2 = yPos;
+
+    pathData += " C " + xc1 + " " + yc1 + " " + xc2 + " " + yc2 + " " + xPos + " " + yPos;
+}
+
+// Set the path data attribute
+path.setAttribute("d", pathData);
+
+// Append the path to the SVG element
+svg.appendChild(path);
+</script>
+</body>
+</html>
